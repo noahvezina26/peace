@@ -32,9 +32,6 @@ def card_comparison(p1_card, p2_card):
         return 0
 
 
-print(card_comparison(("2", "hearts"), ("K", "diamonds")))
-
-
 def play_round(player1_hand, player2_hand):
     """Play a single round of the game.
     That is, each player flips a card, and the winner is determined using the card_comparison function
@@ -46,9 +43,9 @@ def play_round(player1_hand, player2_hand):
 
     wager = []
 
+    wager.extend([p1_card, p2_card])
+
     while True:
-        wager.append(p1_card)
-        wager.append(p1_card)
 
         print(f"Player 1 played a {p1_card[0]} of {p1_card[1]}!")
         print(f"Player 2 played a {p2_card[0]} of {p2_card[1]}!")
@@ -64,9 +61,16 @@ def play_round(player1_hand, player2_hand):
             print("Player 2 wins the battle!\n")
             break
         else:
-            print("\nWAR! Each player has put down an additional three cards!\n")
-            p1_card, p2_card, extra_cards = war(player1_hand, player2_hand)
-            wager += extra_cards
+            print("\nWAR! Each player must put down an additional three cards!\n")
+            if not player1_hand:
+                print("Player 1 has ran out of cards!")
+                break
+            elif not player2_hand:
+                print("Player 2 has ran out of cards!")
+                break
+            else:
+                p1_card, p2_card, extra_cards = war(player1_hand, player2_hand)
+                wager.extend([p1_card, p2_card] + extra_cards)
 
 
 def war(player1_hand, player2_hand):
@@ -77,18 +81,14 @@ def war(player1_hand, player2_hand):
     """
 
     if len(player1_hand) > 4:
-        p1_cards = player1_hand[:4]
-        del player1_hand[:4]
+        p1_cards = [player1_hand.pop(0) for _ in range(4)]
     else:
-        p1_cards = player1_hand
-        del player1_hand
+        p1_cards = [player1_hand.pop(0) for _ in player1_hand]
 
     if len(player2_hand) > 4:
-        p2_cards = player2_hand[:4]
-        del player2_hand[:4]
+        p2_cards = [player2_hand.pop(0) for _ in range(4)]
     else:
-        p2_cards = player2_hand
-        del player2_hand
+        p2_cards = [player2_hand.pop(0) for _ in player2_hand]
 
     return p1_cards[-1], p2_cards[-1], p1_cards[:-1] + p2_cards[:-1]
 
@@ -104,6 +104,8 @@ def play_game():
         print("Player 2 won!")
     else:
         print("Player 1 won!")
+
+    print(len(player1_hand), len(player2_hand))
 
 
 # Call the main function to start the game
